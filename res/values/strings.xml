@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, ListMusicActivity!</string>
     <string name="app_name">ListMusic</string>
-
+	<string name="edit_message">Enter playlist name</string>
+	<string name="button_text">Save</string>
+	<string name="welcome">Welcome to the playlist generator</string>
+	<string name="new_playlist">New Playlist</string>
+	<string name="quit">Quit</string>
+	<string name="playlist_input_hint">Enter playlist name</string>
+	<string name="button_create_playlist">Create</string>
+	<string name="all_songs">View all songs</string>
 </resources>

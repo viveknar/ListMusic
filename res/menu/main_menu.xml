@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/new_playlist" 
+        android:title="@string/new_playlist" />
+    <item android:id="@+id/all_songs" 
+        android:title="@string/all_songs" />
+    <item android:id="@+id/quit"
+        android:title="@string/quit" />
+
+</menu>

@@ -52,7 +52,7 @@ public class ListMusicActivity extends ListActivity {
         	}
         	musicList = songList.toArray(new String[songList.size()]);
        }
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.main, musicList));
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_view, musicList));
         ListView listView = getListView();
         listView.setTextFilterEnabled(true);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -60,5 +60,7 @@ public class ListMusicActivity extends ListActivity {
         		Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
         	}
         });
+        
+        
     }
 }
