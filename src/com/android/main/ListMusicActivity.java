@@ -1,10 +1,14 @@
 package com.android.main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+
 import android.app.ListActivity;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -22,6 +26,8 @@ public class ListMusicActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        
         String[] projection = new String[] {
 				android.provider.MediaStore.Audio.Media.ARTIST_ID,
 				android.provider.MediaStore.Audio.Media.ARTIST,
@@ -44,23 +50,55 @@ public class ListMusicActivity extends ListActivity {
         	songCursor.moveToFirst();
         	List<String> songList = new ArrayList<String>(); 
         	while(songCursor.moveToNext()) {
-        		songList.add(songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST_ID))+", "+
-        		songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST))+", "+
-        		songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE))+", "+
-        		songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DURATION)));
-        		
+        		songList.add(songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST))+", "+
+        		songCursor.getString(songCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.TITLE)));
         	}
         	musicList = songList.toArray(new String[songList.size()]);
        }
+       
         setListAdapter(new ArrayAdapter<String>(this, R.layout.list_view, musicList));
         ListView listView = getListView();
         listView.setTextFilterEnabled(true);
         listView.setOnItemClickListener(new OnItemClickListener() {
 	    	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        		Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				String[] params = ((TextView) view).getText().toString().split(",");
+	    		try {
+					SongEntity song = EchoNest.get_song_details(params[0], params[1]);
+	        		Toast.makeText(getApplicationContext(), song.get_artist(), Toast.LENGTH_SHORT).show();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+
         	}
         });
         
         
     }
+    
+//	private class DownloadMusicDetails extends AsyncTask<String, Void, String> {
+//		@Override
+//		protected String doInBackground(String... params) {
+//			try {
+//				EchoNest.get_song_details(params[0], params[1]);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return params[0]+params[1];
+//			 
+//		}
+//		
+//		protected void onPostExecute(String response) {
+//			Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+//		}
+//	}
+
 }
