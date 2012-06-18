@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+//EchoNest nest class to be checked for errors
 class EchoNest {
 	
 	
