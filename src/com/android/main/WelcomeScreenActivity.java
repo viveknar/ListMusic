@@ -22,15 +22,7 @@ public class WelcomeScreenActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.welcome_screen);
 		EchoNest.setAPIKey("FQTGFAEJK1DLGZVAL");
-		try {
-			EchoNest.get_song_details("metallica", "one");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	
@@ -39,8 +31,7 @@ public class WelcomeScreenActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
-	}
-	
+	}	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.new_playlist: 
