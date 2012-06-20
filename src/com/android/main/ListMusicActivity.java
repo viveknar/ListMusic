@@ -77,7 +77,7 @@ public class ListMusicActivity extends ListActivity {
 			executor.shutdown();
 			while (!executor.isTerminated()) {
 			}
-			return songDetails.get(6).get_echonest_id();
+			return songs;
 
 		}
 
@@ -111,6 +111,7 @@ public class ListMusicActivity extends ListActivity {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				songs += e.getMessage();
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
