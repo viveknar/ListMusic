@@ -1,6 +1,7 @@
 package com.android.main;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -31,16 +32,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String create_musicTable = "CREATE TABLE" + musicTable + "(" + _ID
-				+ "INTEGER, " + ARTIST + "TEXT NOT NULL, " + SONG_NAME
-				+ "TEXT NOT NULL, " + ENERGY + "FLOAT, " + TEMPO + "FLOAT, "
-				+ DANCEABILITY + "FLOAT, " + DURATION + "FLOAT, " + SONG_ID
-				+ "TEXT PRIMARY KEY);";
-		db.execSQL(create_musicTable);
+		String create_musicTable = "CREATE TABLE " + musicTable + "(" + _ID
+				+ " TEXT PRIMARY KEY," + ARTIST + " TEXT," + SONG_NAME
+				+ " TEXT," + ENERGY + " FLOAT," + TEMPO + " FLOAT,"
+				+ DANCEABILITY + " FLOAT," + DURATION + " FLOAT" + ");";
+		try {
+			db.execSQL(create_musicTable);
+		} catch (SQLException e) {
+			e.getMessage();
+			
+		}
 		
-		String create_playlistTable = "CREATE TABLE" + playlistTable + "(" + PLAYLIST_ID
-				+ "INTEGER PRIMARY KEY, " + PLAYLIST_NAME + "TEXT NOT NULL, " + NUM_SONGS
-				+ "INTEGER, " + SONG_LIST + "TEXT NOT NULL);";
+		String create_playlistTable = "CREATE TABLE " + playlistTable + "(" + PLAYLIST_ID
+				+ " INTEGER PRIMARY KEY," + PLAYLIST_NAME + " TEXT NOT NULL," + NUM_SONGS
+				+ " INTEGER," + SONG_LIST + " TEXT NOT NULL);";
 		db.execSQL(create_playlistTable);
 
 	}

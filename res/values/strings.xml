@@ -8,5 +8,6 @@
 	<string name="quit">Quit</string>
 	<string name="playlist_input_hint">Enter playlist name</string>
 	<string name="button_create_playlist">Create</string>
-	<string name="all_songs">View all songs</string>
+	<string name="all_songs">Gather Song Details</string>
+	<string name="addedTracks">Searching for tracks....</string>
 </resources>

@@ -8,25 +8,29 @@ import java.util.concurrent.Executors;
 
 import org.json.JSONException;
 
-import android.app.ListActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListMusicActivity extends ListActivity {
+public class ListMusicActivity extends Activity {
 	public String[] musicList = null;
 	public Cursor songCursor;
 	private String songs = "";
 	private ArrayList<SongEntity> songDetails = new ArrayList<SongEntity>();
+	private int numSongsAdded = 0;
+	private int numSongsNotAdded = 0;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.list_view);
 
-		MusicDBSource db = new MusicDBSource(getApplicationContext());
 		String[] projection = new String[] {
 				android.provider.MediaStore.Audio.Media.ARTIST_ID,
 				android.provider.MediaStore.Audio.Media.ARTIST,
@@ -54,11 +58,8 @@ public class ListMusicActivity extends ListActivity {
 
 		}
 		new EchoNestRequest().execute(musicList);
-		for (SongEntity s : songDetails) {
-			db.open();
-			db.insertEntry(s);
-			db.close();
-		}
+		songCursor.close();
+
 	}
 
 	class EchoNestRequest extends AsyncTask<String[], Void, String> {
@@ -67,24 +68,52 @@ public class ListMusicActivity extends ListActivity {
 		protected String doInBackground(String[]... params) {
 			String output = "";
 			ExecutorService executor = Executors.newFixedThreadPool(5);
-			String[] temp = {params[0][100], params[0][101], params[0][102], params[0][103], params[0][104], params[0][105], params[0][106], params[0][107]};
-			for (String songdet : temp) {
+			String[] temp = { params[0][80], params[0][81], params[0][82],
+					params[0][83], params[0][84], params[0][85], params[0][86],
+					params[0][87] };
+			for (String songdet : params[0]) {
 				String[] det = songdet.split(",");
-				RequestThread worker = new RequestThread(det[0], det[1]);
-				executor.execute(worker);
+					RequestThread worker = new RequestThread(det[0], det[1]);
+					executor.execute(worker);
+				
 			}
 
 			executor.shutdown();
 			while (!executor.isTerminated()) {
 			}
+			numSongsNotAdded = params.length;
 			return songs;
 
 		}
 
 		@Override
 		protected void onPostExecute(String output) {
-			Toast.makeText(getApplicationContext(), output, Toast.LENGTH_LONG)
-					.show();
+			// Toast.makeText(getApplicationContext(), output,
+			// Toast.LENGTH_LONG)
+			// .show();
+			MusicDBSource db = new MusicDBSource(getApplicationContext());
+			db.open();
+			for (SongEntity s : songDetails) {
+				db.insertEntry(s);
+
+			}
+			numSongsAdded = db.getNumEntries();
+			numSongsNotAdded = musicList.length - numSongsAdded;
+			db.close();
+			try {
+				TextView tv = new TextView(getApplicationContext());
+				tv = (TextView) findViewById(R.id.addedTracks);
+				tv.setText(Integer.toString(numSongsAdded) + " tracks added");
+				if (numSongsNotAdded > 0) {
+					tv.append("\n" + Integer.toString(numSongsNotAdded)
+							+ " not added");
+					tv.append("\nPlease check and fix broken ID3 tags");
+				}
+
+			} catch (NullPointerException e) {
+				Toast.makeText(getApplicationContext(), "null pointer",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 
 	}
@@ -95,19 +124,18 @@ public class ListMusicActivity extends ListActivity {
 		public RequestThread(String artist, String title) {
 			this.artist = artist;
 			this.title = title;
-			
+
 		}
 
 		public void run() {
 			try {
-				
-				if (EchoNest.get_song_details(artist, title) == null) {
-					songs += "No song";
-				} else {
-					
-					songs += artist+" "+title+"\n";
-					songDetails.add(EchoNest.get_song_details(artist, title));
+				SongEntity songEntity = EchoNest
+						.get_song_details(artist, title);
+				if (songEntity.get_echonest_id().length() != 0) {
+					songs += artist + " " + title + "\n";
+					songDetails.add(songEntity);
 				}
+				Thread.sleep(50);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -115,8 +143,21 @@ public class ListMusicActivity extends ListActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				e.getMessage();
 			}
+
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent goBack = new Intent(this, WelcomeScreenActivity.class);
+		goBack.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		startActivity(goBack);
+		return;
 	}
 
 }
